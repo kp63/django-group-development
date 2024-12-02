@@ -1,0 +1,96 @@
+{% extends 'threads/base.html' %}
+
+{% block title %}スレッド一覧{% endblock %}
+
+{% block main %}
+<h2>掲示板</h2>
+
+<div>
+    {% if request.user.is_authenticated %}
+    <a class="btn btn-primary mb-3" href="{% url 'threads:create_thread' %}">新規作成</a>
+    {% else %}
+    <p class="text-muted">スレッドを作成するには<a href="{% url 'accounts:login' %}">ログイン</a>してください</p>
+    {% endif %}
+</div>
+
+
+<div class="thread-items">
+    {% for thread in threads %}
+        <div class="thread-item">
+            <div class="username">
+                スレッド作者:
+                <a href="{% url 'accounts:profile' pk=thread.author.pk %}" >
+                    {{ thread.author.username }}</a>
+            </div>
+            <div class="title">
+                <a href="{% url 'threads:thread_detail' thread.pk %}">{{ thread.title }}</a>
+                <!--返信数の表示-->
+                <span class="reply-count">{{ thread.reply_count }}</span><!--ここで返信数の表示-->
+            </div>
+            <div class="created-at">作成日: {{ thread.created_at|date:"Y/m/d" }}</div>
+            <div class="updated-at">更新日: {{ thread.updated_at|date:"Y/m/d H:i" }}</div>
+
+            <!-- ドロップダウンメニュー -->
+            <div class="dropdown" style="position: absolute; top: 10px; right: 10px; z-index: 10;">
+                <button class="btn btn-light btn-sm no-caret" type="button" id="dropdownMenuButton{{ thread.pk }}" data-bs-toggle="dropdown" aria-expanded="false" style="display: flex; justify-content: center; align-items: center; width: 23px; height: 23px; background-color:#f9fdfe;">
+                    &hellip;
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ thread.pk }}"><!--・・・これのボタン-->
+                    <!--・・・のボタンの中身-->
+                    <li>
+                        <!-- 編集ボタン -->
+                        <a class="dropdown-item" href="{% url 'threads:edit_thread' thread.pk %}">編集</a>
+                    </li>
+                    <li>
+                        <!-- 削除ボタン -->
+                        <button class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ thread.pk }}">削除</button>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- 削除確認用モーダル -->
+            <div class="modal fade" id="deleteModal{{ thread.pk }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ thread.pk }}" aria-hidden="true">
+                <div class="modal-dialog" style="max-width: 450px;"><!--削除の警告画面の横幅-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteModalLabel{{ thread.pk }}">削除確認</h5>
+                        </div>
+                        <div class="modal-body">
+                            このスレッドを削除してもよろしいですか？
+                        </div>
+                        <div class="modal-footer d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+                            <form action="{% url 'threads:delete_thread' thread.pk %}" method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">削除する</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+    {% empty %}
+        <p>現在、表示するスレッドがありません。</p>
+    {% endfor %}
+</div>
+
+
+<div class="pagination">
+    <span class="pagination-links">
+        {% if threads.has_previous %}
+            <a href="?page=1">&laquo;</a><!--一番前のページに進むボタンのアイコン-->
+            <a href="?page={{ threads.previous_page_number }}">&lt;</a><!--一ページ前に進む-->
+        {% endif %}
+        {% if threads.has_next %}
+            <a href="?page={{ threads.next_page_number }}">&gt;</a><!--一ページ後ろに戻るボタン-->
+            <a href="?page={{ threads.paginator.num_pages }}">&raquo;</a><!--一番後ろに戻るボタンのアイコン-->
+        {% endif %}
+    </span>
+</div>
+
+<div class="current">
+    ページ {{ threads.number }} / {{ threads.paginator.num_pages }}
+</div>
+
+{% endblock %}

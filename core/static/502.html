@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Server is not running</title>
+    <style>
+        html,
+        body {
+            height: 100%;
+            touch-action: manipulation;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Yu Gothic', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 1.125rem;
+            color: #54abde;
+            margin: 0;
+            padding: 0;
+            background-color: #eef3f6;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+            -ms-flex-direction: column;
+            flex-direction: column;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+            gap: 0.25rem;
+        }
+
+        .brand {
+            margin-bottom: 1rem;
+            user-select: none;
+        }
+
+        .brand img {
+            width: 100px;
+            height: 100px;
+        }
+
+        p {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        p.sub {
+            font-size: 0.875rem;
+            font-weight: 400;
+        }
+
+        ::-moz-selection {
+            background-color: #e0e0e0;
+            color: #4d8fb5;
+        }
+
+        ::selection {
+            background-color: #e0e0e0;
+            color: #4d8fb5;
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #2e3c40;
+                color: #e7f3f8;
+            }
+
+            ::-moz-selection {
+                background-color: #3c4d54;
+                color: #bac9cf;
+            }
+
+            ::selection {
+                background-color: #3c4d54;
+                color: #bac9cf;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="brand">
+        <img src="data:image/png;base64,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" alt="Bluebird">
+    </div>
+    <p>現在アプリケーションサーバーが停止しております</p>
+    <p class="sub">復旧まで今しばらくお待ちください</p>
+</body>
+
+</html>

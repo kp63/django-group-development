@@ -1,0 +1,12 @@
+{% extends 'votes/base.html' %}
+
+{% block main %}
+
+<h1>送信が完了しました。</h1>
+
+<hr></hr>
+<a href="{% url 'votes:index' %}" class="btn btn-primary">
+    投票トップに戻る
+</a>
+
+{% endblock %}

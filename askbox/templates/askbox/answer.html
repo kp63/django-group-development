@@ -1,0 +1,12 @@
+{% extends 'askbox/base.html' %}
+
+{% block main %}
+<h2>質問詳細</h2>
+
+<p><strong>質問者:</strong> {{ question.questioner.username }}</p>
+<p><strong>質問内容:</strong> {{ question.message }}</p>
+
+<p><strong>回答者:</strong> {{ question.answer.responder.username }}</p>
+<p><strong>回答:</strong> {{ question.answer.message }}</p>
+
+{% endblock %}

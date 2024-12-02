@@ -1,0 +1,15 @@
+{% extends 'threads/base.html' %}
+
+{% block title %}新規スレッドを投稿{% endblock %}
+
+{% block main %}
+<h2>新しいスレッドを作成</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_controls }}  <!-- フォームのフィールドを表示 -->
+    <button type="submit" class="btn btn-primary mt-3">投稿</button>
+</form>
+
+<a href="{% url 'threads:index' %}">戻る</a>
+{% endblock %}

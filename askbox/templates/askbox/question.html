@@ -1,0 +1,23 @@
+{% extends 'askbox/base.html' %}
+
+{% block title %}質問を送信{% endblock %}
+
+{% block main %}
+<h2>質問を送信</h2>
+
+<form action="{% url 'askbox:ask_question' %}" method="POST">
+    {% csrf_token %}
+    <div>
+        <label for="question_message">質問内容:</label>
+        <textarea id="question_message" name="message" required></textarea>
+    </div>
+    <div>
+        <label for="question_to">ユーザー名:</label>
+        <input type="text" id="user_name" name="user_name" placeholder="ユーザー名の入力">
+        </select>
+    </div>
+    <button type="submit">送信</button>
+</form>
+
+
+{% endblock %}

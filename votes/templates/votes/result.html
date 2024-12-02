@@ -1,0 +1,19 @@
+{% extends 'votes/base.html' %}
+
+{% block main %}
+
+<h2>投票結果</h2>
+<hr></hr>
+
+<h4>{{ object.title }}</h4>
+
+{% for choice in choices %}
+  <p>{{ choice.value }}: {{ choice.vote_count }}票</p>
+{% endfor %}
+
+<hr></hr>
+<a href="{% url 'votes:index' %}" class="btn btn-primary">
+    投票トップに戻る
+</a>
+
+{% endblock %}

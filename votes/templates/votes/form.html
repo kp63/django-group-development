@@ -1,0 +1,51 @@
+{% extends 'votes/base.html' %}
+
+{% block title %}{{ object.title|truncatechars:20 }}に投票{% endblock %}
+
+{% block main %}
+
+{% if disabled %}
+
+<h1>すでに{{ object.title }}に投票しています。</h1>
+
+<p>投票した内容: {{ voted_choice.value }}</p>
+
+{% for choice in choices %}
+<div class="form-check">
+    <input class="form-check-input" type="radio" name="choice" value="{{ choice.id }}" id="form-choice-{{ choice.id }}" {% if choice.value == voted_choice.value %}checked{% endif %} disabled>
+    <label class="form-check-label" for="form-choice-{{ choice.id }}">
+        {{ choice.value }}
+    </label>
+</div>
+{% endfor %}
+
+{% else %}
+
+<h2>投票</h2>
+<hr></hr>
+
+<h4>{{ object.title }}</h4>
+
+<form method="POST">
+    {% csrf_token %}
+
+    {% for choice in choices %}
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="choice" value="{{ choice.id }}" id="form-choice-{{ choice.id }}">
+        <label class="form-check-label" for="form-choice-{{ choice.id }}">
+            {{ choice.value }}
+        </label>
+    </div>
+    {% endfor %}
+
+    <button type="submit" class="btn btn-primary">送信</button>
+</form>
+
+{% endif %}
+
+<hr></hr>
+<a href="{% url 'votes:index' %}" class="btn btn-primary">
+    投票トップに戻る
+</a>
+
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends 'accounts/base.html' %}
+
+{% block layout_body_class %}{% if not request.GET.next %}widescreen-nav-hidden{% endif %}{% endblock %}
+
+{% block title %}アカウントを作成{% endblock title %}
+
+{% block body %}
+<div class="login-box mt-2">
+    <ul class="nav nav-underline mb-4">
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'accounts:login' %}?next={{ request.GET.next }}">ログイン</a>
+        </li>
+        <li class="nav-item">
+            <span class="nav-link active" aria-current="page">アカウントを作成</span>
+        </li>
+    </ul>
+
+    <h3 class="mb-3">アカウントを作成</h3>
+
+    <div class="form-signin m-auto">
+        <form method="POST" id="signup-form">
+            {% csrf_token %}
+            {{ form.as_floating }}
+            <div class="d-flex justify-content-center mt-3">
+                <button class="btn btn-primary py-2" type="submit">アカウントを作成</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        /* Quick Password Validator */
+        const form = document.querySelector('#signup-form');
+        const passwordContainer = document.querySelector('#id_password1').parentNode;
+        const passwordInput = document.querySelector('#id_password1');
+
+        const rules = {
+            "あなたの他の個人情報と似ているパスワードにはできません。": () => true,
+            "パスワードは最低 8 文字以上必要です。": (password) => {
+                return password.length >= 8;
+            },
+            "よく使われるパスワードにはできません。": (password) => {
+                const pass = password.toLowerCase().trim();
+                
+                const commonPasswords = ['password', 'kamoken', 'abcd1234', 'sekinekazuki'];
+                const commonPasswordPatterns = ['123456', 'qwerty', 'abcdefg'];
+
+                return !commonPasswords.includes(pass) && !commonPasswordPatterns.some((pattern) => pass.includes(pattern));
+            },
+            "数字だけのパスワードにはできません。": (password) => {
+                return !/^\d+$/.test(password);
+            }
+        }
+
+        const helps = passwordContainer.querySelectorAll('li');
+        helps?.forEach((help) => {
+            help.dataset.message = help.textContent;
+        });
+
+        function validate() {
+            const password = passwordInput.value;
+
+            if (!password) {
+                helps.forEach((help) => {
+                    help.classList.remove('text-danger');
+                });
+                return;
+            }
+
+            helps.forEach((help) => {
+                const rule = rules[help.textContent];
+                if (rule && rule(password, form)) {
+                    help.classList.remove('text-danger');
+                } else {
+                    help.classList.add('text-danger');
+                }
+            });
+        }
+
+        passwordInput.addEventListener('input', validate);
+    </script>
+</div>
+{% endblock %}

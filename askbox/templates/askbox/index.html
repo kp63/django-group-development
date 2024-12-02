@@ -1,0 +1,85 @@
+{% extends 'askbox/base.html' %}
+{% load utils %}
+
+{% block title %}匿名質問箱{% endblock %}
+
+{% block main %}
+
+<!-- askbox/templates/askbox/user_questions.html -->
+<h2>
+    あなたからの質問
+</h2>
+
+{% if your_asks %}
+<div class="row">
+    {% for ask in your_asks %}
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">{{ ask.message }}</h5>
+                    <p class="card-text">{{ ask.answer }}</p>
+                </div>
+                <div class="card-footer text-end">
+                    <p class="text-muted text-sm mb-0">{{ ask.created_at|diff_for_humans }}に送った質問</p>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+
+<hr>
+
+
+<h2>あなた宛の質問</h2>
+
+<h3>未回答</h3>
+{% if unreplied_asks %}
+<div class="row">
+    {% for ask in unreplied_asks %}
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <p class="card-text">{{ ask.message }}</p>
+
+                    <div class="text-end">
+                        <a href="{% url 'askbox:reply' ask.pk %}" class="btn btn-primary btn-sm">返信する</a>
+                    </div>
+                </div>
+                <div class="card-footer text-end">
+                    <p class="text-muted text-sm mb-0">{{ ask.created_at|diff_for_humans }}に来た質問</p>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% else %}
+    <p class="text-center text-muted my-5">現在、回答済みの質問はありません</p>
+{% endif %}
+
+
+
+<h3>回答済み</h3>
+
+{% if replied_asks %}
+<div class="row">
+    {% for ask in replied_asks %}
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">{{ ask.message }}</h5>
+                    <p class="card-text">{{ ask.answer }}</p>
+                </div>
+                <div class="card-footer text-end">
+                    <p class="text-muted text-sm mb-0">{{ ask.created_at|diff_for_humans }}に来た質問</p>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% else %}
+    <p class="text-center text-muted my-5">現在、回答済みの質問はありません</p>
+{% endif %}
+
+{% endblock %}

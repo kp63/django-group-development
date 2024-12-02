@@ -1,0 +1,50 @@
+{% extends 'tweets/base.html' %}
+{% load static %}
+
+{% block title %}「{{ query }}」の検索結果 - つぶやき{% endblock %}
+
+{% block main %}
+<h2>「{{ query }}」の検索結果</h2>
+<a href="{% url 'tweets:index' %}">つぶやきTOPへ</a>
+<hr>
+
+{#検索バー#}
+<nav class="navbar mb-2">
+    <div class="col-12 col-md-6 col-lg-10">
+    <div class="container-fluid" style="background-color: #">
+        <form class="d-flex align-items-center" action="{% url 'tweets:results' %}" method="get" role="search">
+            <input class="form-control search-input me-5" type="search" name="q" placeholder="つぶやきorユーザーを検索:🔍" aria-label="Search">
+            <button class="btn btn-primary text-nowrap" type="submit">検索</button>
+        </form>
+    </div>
+</nav>
+
+{#検索結果を表示#}
+{% if results %}
+    {#入力したワードが引っかかったとき#}
+    {% for tweet in results %}
+    <div class="mb-0 card border-primary tweet-card {% if forloop.first %}first-card{% endif %}" style="max-width: 35rem; position: relative; background-color: #f9fdfe;">
+        <div class="card-header p-0" style="background-color: #eff8ff;">
+            <span style="margin-right: 5px;"></span>
+            <a href="{% url 'accounts:profile' tweet.user.pk %}"  class="username-large">{{ tweet.user.username }}</a>
+        </div>
+        <div class="card-body p-2 text-primary">
+            <p class="card-text text-black">{{ tweet.content|urlize|linebreaksbr }}</p>
+            <div style="text-align: left;">
+                {% if tweet.image %}
+                {#画像を表示#}
+                <img src="{{ tweet.image.url }}" alt="Tweet Image" style="max-width: 100%; height: auto; display: block; margin: 0;">
+                {% endif %}
+                {#日時を表示#}
+                <small class="text-muted" style="display: block; margin-top: 10px;">{{ tweet.created_at }}</small>
+            </div>
+
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+{#検索結果がなかった時に表示#}
+<img src="{% static 'assets/img/results.png' %}" alt="No data" style="position:absolute;left:50%;transform:translateX(-50%);" class="results-image" width="150" height="150">
+{% endif %}
+
+{% endblock %}

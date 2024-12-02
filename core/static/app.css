@@ -1,0 +1,133 @@
+/* 基本タグ */
+* {
+    box-sizing: border-box;
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    min-height: 100%;
+    min-width: 300px;
+    width: 100%;
+    margin: 0;
+    /* background-color: rgba(29, 160, 242, .02) !important; */
+    background: linear-gradient(135deg, rgba(29, 160, 242, .02), rgba(29, 160, 242, .04)) !important;
+    overflow-y: scroll;
+}
+
+
+/* ユーティリティクラス */
+.text-xs {
+    font-size: 12px;
+}
+
+.text-sm {
+    font-size: 14px;
+}
+
+.text-md {
+    font-size: 16px;
+}
+
+.text-lg {
+    font-size: 18px;
+}
+
+.text-xl {
+    font-size: 20px;
+}
+
+/* Bluebird用ボタン */
+.bb-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 6px;
+    background-color: rgba(29, 161, 242, .1);
+    color: #1da1f2;
+    text-decoration: none;
+    transition: background-color ease-in-out .12s;
+
+    &:hover {
+        background-color: rgba(29, 161, 242, .2);
+    }
+}
+
+/* ボックス */
+.rounded-box {
+    padding: 16px 20px;
+    background-color: rgba(0, 0, 0, .02);
+    border: solid 1px rgba(0, 0, 0, .1);
+    border-radius: 6px;
+}
+
+/* ボックスラベル */
+.box-label {
+    font-size: 16px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, .7);
+    margin-bottom: 10px;
+}
+
+
+/* ポップオーバー */
+.bb-popover {
+    position: relative;
+    cursor: pointer;
+
+    /* ポップオーバー: ラベル */
+    .bb-popover-label {
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        margin-top: 4px;
+        padding: 6px 12px;
+        background-color: #fefefe;
+        color: #333;
+        font-size: 13px;
+        border: solid 1px rgba(0, 0, 0, .1);
+        border-radius: 4px;
+        box-shadow: 3px 3px 6px rgba(0, 0, 0, .1);
+        z-index: 1000;
+        max-width: 100vw;
+        pointer-events: none;
+        white-space: nowrap;
+        pointer-events: none;
+        transform: translateY(-10px) translateX(-50%) scale(.9);
+        opacity: 0;
+        transition: transform ease-in-out .12s, opacity ease-in-out .12s;
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+
+            li {
+                a {
+                    display: block;
+                    padding: 6px 12px;
+                    text-decoration: none;
+                    color: #174a6a;
+                    transition: background-color ease-in-out .12s, color ease-in-out .12s;
+
+                    &:hover {
+                        background-color: rgba(29, 161, 242, .1);
+                    }
+                }
+            }
+        }
+    }
+
+    /* ポップオーバー: トリガー */
+    .bb-popover-trigger {
+
+        &:hover,
+        &:focus {
+            ~.bb-popover-label {
+                transform: translateX(-50%) scale(1);
+                opacity: 0.92;
+            }
+        }
+    }
+}

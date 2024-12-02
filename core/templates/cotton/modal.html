@@ -1,0 +1,23 @@
+<c-vars
+    id
+    type="text"
+    errors
+    be
+/>
+
+<!-- Modal -->
+<div class="
+modal
+{% if be == 'open' %}be-open{% elif be == 'close' %}be-close{% endif %}
+{% if be %}be-fade{% else %}fade{% endif %}
+" id="{{ id }}" tabindex="-1" aria-labelledby="{{ id }}-label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title fs-5" id="{{ id }}-label">{{ title }}</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">{{ slot }}</div>
+        </div>
+    </div>
+</div>

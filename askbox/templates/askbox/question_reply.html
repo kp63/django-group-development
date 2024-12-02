@@ -1,0 +1,21 @@
+{% extends 'askbox/base.html' %}
+
+{% block title %}質問に返信{% endblock %}
+
+{% block main %}
+<h2>質問に返信</h2>
+
+<form method="POST">
+    {% csrf_token %}
+    <h4>
+        質問: {{ question.message }}
+    </h4>
+    <div>
+        <label for="question_message">この質問に返信:</label>
+        <textarea class="form-control mb-2" id="question_message" name="message" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">送信</button>
+</form>
+
+
+{% endblock %}

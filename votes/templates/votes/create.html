@@ -1,0 +1,29 @@
+{% extends 'votes/base.html' %}
+
+{% block title %}新しい投票を作成{% endblock %}
+
+{% block main %}
+<h3>投票作成</h3>
+<hr></hr>
+
+<form method="POST">
+  {% csrf_token %}
+
+  {{ form.as_controls }}
+
+  <button type="submit" class="btn btn-primary mt-3">作成</button>
+</form>
+
+{% if request.user == object.user %}
+<form method="POST">
+
+<a href="{% url '' object.pk %}"
+class="btn btn-primary my-2">削除する</a>
+{% endif %}
+
+<hr></hr>
+<a href="{% url 'votes:index' %}" class="btn btn-primary">
+    投票トップに戻る
+</a>
+
+{% endblock %}

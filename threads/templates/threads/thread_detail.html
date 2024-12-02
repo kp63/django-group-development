@@ -1,0 +1,59 @@
+{% extends 'threads/base.html' %}
+
+{% block main %}
+
+<h2>{{ thread.title }}</h2>
+<p>
+    作者：
+    {% if thread.author %}
+    <a href="{% url 'accounts:profile' pk=thread.author.pk %}">
+        {{ thread.author.username }}</a>
+
+    {% endif %}
+</p>
+
+<div class="thread-actions">
+    <a class="btn btn-primary mb-3" href="{% url 'threads:edit_thread' thread.pk %}?from=detail">編集</a>
+
+</div>
+
+
+<div class="chat-messages">
+    {% for message in chat_messages %}
+        <div class="chat-message">
+            <strong>
+                {% if message.author %}
+                    <a href="{% url 'accounts:profile' pk=message.author.pk %}">
+                    {{ message.author.username }}</a>
+
+                {% endif %}
+            </strong>
+            <p>{{ message.message }}</p>
+
+            <!-- リプライの表示 -->
+            {% if message.replies.exists %}
+                <div class="replies">
+                    {% for reply in message.replies.all %}
+                        <p><strong>
+                            {% if reply.author %}
+                                {{ reply.author.username }}
+                            {% endif %}
+                        </strong> {{ reply.message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    {% empty %}
+        <p>まだメッセージはありません。</p>
+    {% endfor %}
+</div>
+
+<form method="post" action="{% url 'threads:create_chat_message' thread.id %}">
+    {% csrf_token %}
+    {{ form.as_controls }}
+    <p></p><!--ただの空白-->
+    <button type="submit" class="btn btn-primary">送信</button>
+</form>
+
+<a href="{% url 'threads:index' %}">戻る</a>
+{% endblock %}

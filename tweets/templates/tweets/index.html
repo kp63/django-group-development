@@ -1,0 +1,59 @@
+{% extends 'tweets/base.html' %}
+{% load static %}
+
+{% block title %}つぶやき{% endblock %}
+
+{% block main %}
+
+<h2>つぶやき</h2>
+
+<a href="{% url 'tweets:mypage' %}">マイページへ</a>
+<hr class="mb-2">
+
+<nav class="navbar mb-2" >
+    <div class="col-12 col-md-6 col-lg-10">
+    {#検索バー#}
+    <div class="container-fluid">
+        <form class="d-flex align-items-center" action="{% url 'tweets:results' %}" method="get" role="search">
+            <input class="form-control search-input me-5" type="search" name="q" placeholder="つぶやきorユーザーを検索:🔍" aria-label="Search">
+            <button class="btn btn-primary text-nowrap" type="submit">検索</button>
+        </form>
+    </div>
+</nav>
+
+
+{% for tweet in tweets %}
+{#つぶやきを表示するカードの設定#}
+<div class="mb-0 card border-primary tweet-card {% if forloop.first %}first-card{% endif %}" style="max-width: 35rem; position: relative; background-color: #f9fdfe;">
+    {#ユーザー名を表示#}
+    <div class="card-header p-0" style="background-color: #eff8ff;">
+        <span style="margin-right: 5px;"></span>
+        {#プロフィールからユーザーを取得#}
+        <a href="{% url 'accounts:profile' tweet.user.pk %}" class="username-large">{{ tweet.user.username }}</a>
+    </div>
+
+    <div class="card-body p-2 text-primary">
+        {#つぶやきを表示#}
+        <p class="card-text text-black">{{ tweet.content|urlize|linebreaksbr }}</p>
+
+        <div style="text-align: left;">
+            {% if tweet.image %}
+            {#画像を表示#}
+            <img src="{{ tweet.image.url }}" alt="Tweet Image" style="max-width: 100%; height: auto; display: block; margin: 0;">
+            {% endif %}
+            {#日時を表示#}
+            <small class="text-muted" style="display: block; margin-top: 10px;">{{ tweet.created_at }}</small>
+        </div>
+
+    </div>
+</div>
+
+{% empty %}
+{#ツイートがない場合に画像を表示#}
+<img src="{% static 'assets/img/results.png' %}" alt="No data" style="position:absolute;left:50%;transform:translateX(-50%);" class="mp-image" width="200" height="200">
+{% endfor %}
+
+
+{% endblock %}
+
+

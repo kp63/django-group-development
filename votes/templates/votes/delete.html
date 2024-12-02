@@ -1,0 +1,27 @@
+{% extends 'votes/base.html' %}
+
+{% block title %}投票{% endblock %}
+
+{% block head %}
+<meta name="robots" content="noindex">
+{% endblock %}
+
+{% block main %}
+
+<br>
+<div class="container">
+    <div class="row">
+        <div class="col offset-3">
+            <form method="POST">
+                <br>
+                <h2>この投票を削除しますか？</h2>
+                {% csrf_token %}
+                <button class="btn btn-danger my-2"
+                        type="submit">削除</button>
+                <a href="{% url 'votes:index' %}"
+                class="btn btn-secondary my-2">キャンセル</a>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

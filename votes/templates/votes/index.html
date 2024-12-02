@@ -1,0 +1,43 @@
+{% extends 'votes/base.html' %}
+
+{% block title %}投票{% endblock %}
+
+{% block main %}
+<h2>投票</h2>
+<hr></hr>
+<div>
+    {% if request.user.is_authenticated %}
+    <div class="mb-3">
+        <a href="{% url 'votes:create' %}" class="btn btn-primary">投票を作りたい方はこちら</a>
+      </div>
+
+      {% for vote in object_list %}
+          <div class="card mb-1" style="width: 20rem;">
+              <div class="card-body">
+                  <h5 class="card-title">{{ vote.title }}</h5>
+                  <p class="card-text">投票お願いします！</p>
+
+                  <a href="{% url 'votes:form' vote.pk %}" class="btn btn-primary">
+                    投票へ
+                  </a>
+
+                  <a href="{% url 'votes:result' vote.pk %}" class="btn btn-primary">
+                    投票結果
+                  </a>
+
+                  {% if object == request.user %}
+                  <a href="{% url 'votes:delete' vote.pk %}" class="btn btn-danger">
+                      削除する
+                  </a>
+                  {% endif %}
+              </div>
+            </div>
+      {% endfor %}
+    {% else %}
+    <p class="text-muted">投票機能を使用するには<a href="{% url 'accounts:login' %}">ログイン</a>してください</p>
+    {% endif %}
+</div>
+
+
+
+{% endblock %}

@@ -1,0 +1,197 @@
+{% extends 'tweets/base.html' %}
+
+{% block title %}マイページ - つぶやき{% endblock %}
+{% load static %}
+
+{% block main %}
+<h2>マイページ</h2>
+<a href="{% url 'tweets:index' %}">つぶやきTOPへ</a>
+<hr>
+
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tweetModal">つぶやく</button>
+<p></p>
+
+{#つぶやき投稿フォーム、モーダル#}
+<div class="modal fade" id="tweetModal" tabindex="-1" aria-labelledby="tweetModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                {#フォームタイトル#}
+                <h5 class="modal-title mb-0" id="tweetModalLabel">つぶやく</h5>
+                {#画像アイコン#}
+                <label for="tweet-image" style="cursor: pointer;">
+                    <img src="{% static 'assets/img/49166.png' %}" alt="img" width="20" height="20" class="icon-img">
+                </label>
+            </div>
+
+            <div class="modal-body">
+                {#あたらしいつぶやきを作成#}
+                <form action="{% url 'tweets:create' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        {#入力フォーム#}
+                        <textarea id="tweet-content" name="content" class="form-control tweet-textarea" rows="1" placeholder="今なにしてる？" style="overflow: hidden;"></textarea>
+                        {#２００文字超えた場合に表示#}
+                        <div id="alert-message" class="alert alert-danger mt-2" style="display: none;">
+                            200文字以内で入力してください。
+                        </div>
+                        {#画像アップロード#}
+                        <input type="file" id="tweet-image" name="image" style="display: none;" accept="image/*" onchange="showPreview(event)">
+                        {#アップロードされた画像のプレビュー#}
+                        <div id="image-preview"  style="display: none; position: relative;">
+                            {#自動的に画像のサイズを変更#}
+                            <img id="preview-img" src="#" alt="画像プレビュー" style="max-width: 100%; height: auto;">
+                            {#添付した画像を削除#}
+                            <button type="button" id="remove-image" style="position: absolute; top: 5px; right: 5px; background-color: rgba(0, 0, 0, 0.5); color: white; border: none; border-radius: 50%; width: 25px; height: 25px; font-size: 16px; display: flex; align-items: center; justify-content: center;">
+                                &times;
+                            </button>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-3">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+                        <button type="submit" class="btn btn-primary" id="submit-button">つぶやく</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        //上のつぶやきフォームの各 各idを取得
+        const textarea = document.getElementById('tweet-content');
+        const alertMessage = document.getElementById('alert-message');
+        const submitButton = document.getElementById('submit-button');
+        const fileInput = document.getElementById('tweet-image');
+        const previewContainer = document.getElementById('image-preview');
+        const previewImage = document.getElementById('preview-img');
+        const removeImageButton = document.getElementById('remove-image');
+
+        function validateForm() {
+            //改行時のスペースを削除して文字数をカウントする
+            const textLength = textarea.value.trim().length;
+            //画像が添付されているかの確認
+            const hasImage = fileInput.files && fileInput.files.length > 0;
+
+            //ツイートに各制限をかける（今回は２００文字）
+            //２００文字を超えた場合つぶやきボタンをロックしエラーメッセージを表示
+            if (textLength > 200) {
+                alertMessage.style.display = 'block';
+                submitButton.disabled = true;
+            //文字を入力していないもしくは画像を添付していない場合
+            } else {
+                alertMessage.style.display = 'none';
+                submitButton.disabled = (textLength === 0 && !hasImage);
+            }
+        }
+
+        //画像プレビュー
+        function showPreview(event) {
+            const file = event.target.files[0];
+            if (file) {
+                //ファイルがあるときファイルを読み込み
+                const reader = new FileReader();
+                //画像が読み取れた時に以下の処理
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                    //画像プレビューを表示
+                    previewContainer.style.display = 'block';
+                };
+                //ファイルをURLとして読み取る
+                reader.readAsDataURL(file);
+            }
+            validateForm();
+        }
+
+        //プレビュー時の画像削除
+        removeImageButton.addEventListener('click', function() {
+            //プレビューを非表示
+            previewContainer.style.display = 'none';
+            previewImage.src = '';
+            //ファイルをリセット
+            fileInput.value = '';
+            validateForm();
+        });
+
+        //入力フォームを自動調整
+        textarea.addEventListener('input', function () {
+            validateForm();
+            //テキストエリアをリセット
+            this.style.height = 'auto';
+            //テキストエリアの高さを自動調整
+            this.style.height = this.scrollHeight + 'px';
+        });
+
+        fileInput.addEventListener('change', showPreview);
+        validateForm();
+    });
+</script>
+
+
+{% for tweet in tweets %}
+{#つぶやきカードの作成#}
+<div id="tweet-card-{{ tweet.pk }}" class="mb-0 card border-primary  tweet-card {% if forloop.first %}first-card{% endif %}" style="max-width: 35rem; position: relative; background-color: #f9fdfe;">
+    {#カードのパディングを設定#}
+    <div class="card-body p-2 text-primary" style="padding-top: 30px; position: relative; z-index: 1;">
+        {#つぶやきを表示、url、改行など#}
+        <p class="card-text  text-black tweet-content" style="position: relative; z-index: 1;">{{ tweet.content|urlize|linebreaksbr }}</p>
+        {#画像添付されているとき表示#}
+        <div style="text-align: left;">
+            {% if tweet.image %}
+            {#画像を表示#}
+            <img src="{{ tweet.image.url }}" alt="Tweet Image" style="max-width: 100%; height: auto; display: block; margin: 0;">
+            {% endif %}
+            {#日時を表示#}
+            <small class="text-muted" style="display: block; margin-top: 10px;">{{ tweet.created_at }}</small>
+        </div>
+
+        {#みーとぼーるぼたんの設定#}
+        <div class="dropdown" style="position: absolute; top: 10px; right: 10px; z-index: 10;">
+            <button class="btn btn-light btn-sm no-caret" type="button" id="dropdownMenuButton{{ tweet.pk }}" data-bs-toggle="dropdown" aria-expanded="false" style="display: flex; justify-content: center; align-items: center; width: 23px; height: 23px; background-color:#f9fdfe;">
+                &hellip;
+            </button>
+            {#クリックしたときに表示#}
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ tweet.pk }}">
+                <li>
+                    <button class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ tweet.pk }}">つぶやきを削除</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+{#削除ボタンを押したとき#}
+<div class="modal fade" id="deleteModal{{ tweet.pk }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ tweet.pk }}" aria-hidden="true">
+    {#サイズ設定#}
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 350px;">
+        {#確認画面#}
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel{{ tweet.pk }}">つぶやきを削除しますか</h5>
+            </div>
+            <div class="modal-by">
+                この操作は取り消せません。プロフィール、おすすめ、検索結果からつぶやきが削除されます。
+            </div>
+
+            <div class="modal-footer d-flex justify-content-between">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+                <form action="{% url 'tweets:delete_tweet' tweet.pk %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">削除する</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% empty %}
+<div class="container">
+    <img src="{% static 'assets/img/myp.png' %}" alt="ツイート" style="position:absolute;left:50%;transform:translateX(-50%);" width="200" height="200">
+</div>
+{% endfor %}
+
+
+{% endblock %}
+
